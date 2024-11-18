@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="output.css">
+</head>
+<body>
+    hello <%= title %>
+    <h1 class="text-red-300 text-3xl">Hitesh mali</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data" >
+        <label for="fileName">File</label>
+        <input type="file" id="fileName"  name="filetoupload" >
+        <label for="name">UserName</label>
+        <input type="text" name="name" id="name">
+        <input type="submit"  value="Submit">
+    </form>
+    <button class="px-6 py-3 bg-pink-500 text-white my-4 rounded-md text-2xl" onclick="getLocation()">Get Location</button>
+    <p class="showDetails">User Location details</p>
+    <p class="fullAddress">User Address</p>
+    <p class="formattedAddress">User Address</p>
+
+    <script>
+        const showDetails = document.querySelector('.showDetails');
+        const fullAddress = document.querySelector('.fullAddress');
+        const formattedAddress = document.querySelector('.formattedAddress');
+        let key = "850844be2717484381950a11af2c4fdc"
+        const getLocationFromLongitudeAndLatitude = async(latitude, longitude)=>{
+            try {
+                let res = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}%2C${longitude}&key=${key}`);
+                res = await res.json();
+                const currLocation = res.results[0];
+                const {city, state, postcode, country} = currLocation.components;
+                console.log(currLocation)
+                fullAddress.textContent = `User address : ${city}, ${postcode}, ${state}, ${country}`;
+                formattedAddress.textContent = currLocation.formatted;
+                
+            } catch (error) {
+                console.log(error);
+                
+            }
+        }
+        const getLocation = (e) =>{
+            if(navigator.geolocation){
+                navigator.geolocation.getCurrentPosition((position) =>{
+                    // console.log(position)
+                    const {latitude, longitude} = position.coords;
+                    console.log(latitude, longitude);
+                    showDetails.textContent = `The latitude ${latitude} and longitude ${longitude}`;
+                    getLocationFromLongitudeAndLatitude(latitude, longitude);
+                },
+                 (err) =>{
+                    console.log(err)
+                    showDetails.textContent = err.message;
+                })
+            }
+            console.log("hii")
+        }
+    </script>
+
+</body>
+</html>

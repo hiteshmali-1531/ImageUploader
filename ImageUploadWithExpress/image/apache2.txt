@@ -1,0 +1,25 @@
+<VirtualHost *:80>
+
+ServerName  www.themarketjoy.com
+ServerAlias  themarketjoy.com
+ServerAdmin  hiteshmali1531@gmail.com
+
+ErrorLog ${APACHE2_LOG_DIR}error.log
+CustomLog ${APACHE2_LOG_DIR}access.log combined
+
+ProxyRequests Off
+ProxyPreserveHost On
+ProxyVia Full
+
+<Proxy *>
+  Require all granted
+</Proxy>
+
+ProxyPass / http://16.170.239.62:3000/
+ProxyPassReverse / http://16.170.239.62:3000/
+
+RewriteEngine on
+RewriteCond %{SERVER_NAME} =inote.themarketjoy.com [OR]
+RewriteCond %{SERVER_NAME} =www.inote.themarketjoy.com
+RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+</VirtualHost>
